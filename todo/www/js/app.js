@@ -1,4 +1,4 @@
-angular.module('todo', ['ionic'])
+angular.module('todo', ['ionic', 'ngCordova'])
 /**
  * The Projects factory handles saving and loading projects
  * from local storage, and also lets us save and load the
@@ -32,7 +32,7 @@ angular.module('todo', ['ionic'])
   }
 })
 
-.controller('TodoCtrl', function($scope, $timeout, $ionicModal, Projects, $ionicSideMenuDelegate) {
+.controller('TodoCtrl', function($scope, $timeout, $ionicModal, Projects, $ionicSideMenuDelegate, $cordovaToast) {
 
   // A utility function for creating a new project
   // with the given projectTitle
@@ -55,6 +55,7 @@ angular.module('todo', ['ionic'])
     var projectTitle = prompt('Project name');
     if(projectTitle) {
       createProject(projectTitle);
+      $scope.showToast('Missatge a mostrar', 'long','bottom');
     }
   };
 
@@ -98,21 +99,26 @@ angular.module('todo', ['ionic'])
   $scope.toggleProjects = function() {
     $ionicSideMenuDelegate.toggleLeft();
   };
-
-
+  $scope.showToast = function(message, duration, location) {
+        $cordovaToast.show(message, duration, location).then(function(success) {
+            console.log("The toast was shown");
+        }, function (error) {
+            console.log("The toast was not shown due to " + error);
+        });
+    }
   // Try to create the first project, make sure to defer
   // this by using $timeout so everything is initialized
   // properly
-  $timeout(function() {
-    if($scope.projects.length == 0) {
-      while(true) {
-        var projectTitle = prompt('Your first project title:');
-        if(projectTitle) {
-          createProject(projectTitle);
-          break;
-        }
-      }
-    }
-  }, 1000);
+  // $timeout(function() {
+  //   if($scope.projects.length == 0) {
+  //     while(true) {
+  //       var projectTitle = prompt('Your first project title:');
+  //       if(projectTitle) {
+  //         createProject(projectTitle);
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }, 1000);
 
 })
